@@ -44,6 +44,11 @@
       margin: 0;
     }
 
+    h2 {
+      font-size: 30px;
+      margin: 0;
+    }
+
     #loader {
       display: none;
     }
@@ -54,6 +59,89 @@
 
     #adblock-detected {
       display: none;
+    }
+
+    .results {
+      margin: 60px auto 0;
+      text-align: center;
+      max-width: 600px;
+    }
+
+    table {
+      margin: 0 auto;
+      min-width: 480px;
+    }
+
+    td {
+      padding: 8px 8px;
+      border-bottom: 1px solid #eee;
+    }
+
+    tr:last-child td {
+      border-bottom: 0; 
+    }
+
+    tr > td {
+      position: relative;
+    }
+
+    tr > td:first-child {
+      text-align: left;
+    }
+
+    tr > td:last-child {
+      overflow: hidden;
+      width: 24px;
+    }
+
+    .result {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      height: 24px;
+      width: 24px;
+      color: #fff;
+      background-color: green;
+      text-align: center;
+    }
+
+    .result:after {
+      content: "";
+      position: absolute;
+      display: none;
+    }
+
+    tr.test-allowed .result {
+      background-color: red;
+    }
+
+    tr.test-allowed .result:after {
+      display: block;
+    }
+
+    tr.test-allowed .result:after {
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      right: 0;
+      content: "X";
+      font-weight: bold;
+      line-height: 24px;
+      font-size: 18px;
+      color: white;
+    }
+
+    tr.test-blocked .result:after {
+      left: 9px;
+      top: 5px;
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 3px 3px 0;
+      -webkit-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      transform: rotate(45deg);
     }
 
     #adblock-not-detected {
@@ -158,7 +246,7 @@
       </div>
       <div id="adblock-not-detected">
         <h1>No</h1>
-        <p>We have not detected an ad blocker.</p>
+        <p>Some advertising services loaded successfully.</p>
       </div>
       <div id="loader">
         <div class="loading-message">
@@ -232,9 +320,36 @@
         var nodeId = testResults.find(function (d) {
           return d[1];
         }) ? 'adblock-not-detected' : 'adblock-detected';
+
+        var root = document.getElementById(nodeId);
+        renderResults(root, testResults)
         document.body.className = '';
-        document.getElementById(nodeId).style.display = 'block';
+        root.style.display = 'block';
       } 
+
+      function renderResults(parentEl, testResults) {
+        var results = document.createElement('div');
+        results.className = 'results';
+        parentEl.appendChild(results);
+        var h2 = document.createElement('h2');
+        h2.innerText = 'Results';
+        results.appendChild(h2);
+        var table = document.createElement('table');
+        testResults.forEach(function(r) {
+          var row = document.createElement('tr');
+          row.className = 'test-' + (r[1] ? 'allowed' : 'blocked');
+          row.appendChild(_createCell(r[0]))
+          row.appendChild(_createCell('<div class="result"></div>'))
+          table.appendChild(row);
+        })
+        results.appendChild(table);
+      }
+
+      function _createCell(body) {
+        var el = document.createElement('td');
+        el.innerHTML = body;
+        return el;
+      }
 
       function main() {
         runTests(onComplete);
