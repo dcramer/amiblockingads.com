@@ -72,7 +72,7 @@
       min-width: 480px;
     }
 
-    td {
+    td, th {
       padding: 8px 8px;
       border-bottom: 1px solid #eee;
     }
@@ -85,13 +85,21 @@
       position: relative;
     }
 
-    tr > td:first-child {
+    tr > td:first-child,
+    tr > th:first-child {
       text-align: left;
     }
 
     tr > td:last-child {
       overflow: hidden;
       width: 24px;
+    }
+
+    tr > th {
+      color: #999;
+      font-weight: normal;
+      text-transform: uppercase;
+      font-size: 0.8em;
     }
 
     .result {
@@ -110,38 +118,13 @@
       position: absolute;
       display: none;
     }
-
-    tr.test-allowed .result {
-      background-color: red;
+    
+    .test-blocked td:last-child {
+      color: green;
     }
 
-    tr.test-allowed .result:after {
-      display: block;
-    }
-
-    tr.test-allowed .result:after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      content: "X";
-      font-weight: bold;
-      line-height: 24px;
-      font-size: 18px;
-      color: white;
-    }
-
-    tr.test-blocked .result:after {
-      left: 9px;
-      top: 5px;
-      width: 5px;
-      height: 10px;
-      border: solid white;
-      border-width: 0 3px 3px 0;
-      -webkit-transform: rotate(45deg);
-      -ms-transform: rotate(45deg);
-      transform: rotate(45deg);
+    .test-allowed td:last-child {
+      color: red;
     }
 
     #adblock-not-detected {
@@ -271,19 +254,23 @@
 
       function capturePromise(testResults, name, promise) {
         return promise.then(function() {
-           testResults.push(['googleadservices.com js', true]);
+           testResults.push([name, true]);
          }).catch(function() {
-           testResults.push(['googleadservices.com js', false]);
+           testResults.push([name, false]);
          })
       }
 
       function runTests() {
-        var testResults = [];
+        var testResults = [
+          // [testName, didItLoadSuccessfully]
+        ];
 
-        testResults.push(['local ads.js', window.DETECT_SRC_LOADED]);
+        // testResults.push(['local ads.js', window.DETECT_SRC_LOADED]);
 
         Promise.all([
-          capturePromise(testResults, 'googleadservices.com js', testScriptTag('http://www.googleadservices.com/pagead/conversion.js')),
+          capturePromise(testResults, 'googleadservices tracker', testScriptTag('http://www.googleadservices.com/pagead/conversion.js')),
+          capturePromise(testResults, 'twitter tracker', testScriptTag('static.ads-twitter.com/uwt.js')),
+          capturePromise(testResults, 'facebook tracker', testScriptTag('connect.facebook.net/en_US/fbevents.js')),
         ]).finally(function() {
           onComplete(testResults);
         });
@@ -332,18 +319,22 @@
         h2.innerText = 'Results';
         results.appendChild(h2);
         var table = document.createElement('table');
+        var row = document.createElement('tr');
+        row.appendChild(_createCell('Test', 'th'));
+        row.appendChild(_createCell('Blocked?', 'th'));
+        table.appendChild(row);
         testResults.forEach(function(r) {
           var row = document.createElement('tr');
           row.className = 'test-' + (r[1] ? 'allowed' : 'blocked');
           row.appendChild(_createCell(r[0]))
-          row.appendChild(_createCell('<div class="result"></div>'))
+          row.appendChild(_createCell(r[1] ? 'no' : 'yes'))
           table.appendChild(row);
         })
         results.appendChild(table);
       }
 
-      function _createCell(body) {
-        var el = document.createElement('td');
+      function _createCell(body, element) {
+        var el = document.createElement(element || 'td');
         el.innerHTML = body;
         return el;
       }
