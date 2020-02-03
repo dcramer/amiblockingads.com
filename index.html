@@ -286,9 +286,9 @@
         ];
 
         Promise.all([
-          capturePromise(testResults, 'googleadservices tracker', testScriptTag('http://www.googleadservices.com/pagead/conversion.js')),
-          capturePromise(testResults, 'twitter tracker', testScriptTag('static.ads-twitter.com/uwt.js')),
-          capturePromise(testResults, 'facebook tracker', testScriptTag('connect.facebook.net/en_US/fbevents.js')),
+          capturePromise(testResults, 'googleadservices tracker', testScriptTag('https://www.googleadservices.com/pagead/conversion.js')),
+          capturePromise(testResults, 'twitter tracker', testScriptTag('https://static.ads-twitter.com/uwt.js')),
+          capturePromise(testResults, 'facebook tracker', testScriptTag('https://connect.facebook.net/en_US/fbevents.js')),
         ]).finally(function() {
           testResults.sort();
           onComplete(testResults);
