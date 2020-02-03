@@ -290,6 +290,7 @@
           capturePromise(testResults, 'twitter tracker', testScriptTag('static.ads-twitter.com/uwt.js')),
           capturePromise(testResults, 'facebook tracker', testScriptTag('connect.facebook.net/en_US/fbevents.js')),
         ]).finally(function() {
+          testResults.sort();
           onComplete(testResults);
         });
       }
