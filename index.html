@@ -31,12 +31,26 @@
       height: 100%;
       width: 100%;
       display: flex;
+      flex-direction: column;
       align-items: center;
       text-align: center;
     }
 
     section > div {
-      flex: 1
+      flex: 1;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    footer {
+      margin: 40px 5px 20px;
+      font-size: 0.6em;
+      text-align: center;
+    }
+
+    footer a {
+      color: #000;
     }
 
     h1 {
@@ -54,11 +68,17 @@
     }
 
     .loading #loader {
-      display: block;
+      display: flex;
     }
 
-    #adblock-detected {
+    #adblock-detected,
+    #adblock-not-detected {
       display: none;
+    }
+
+    #adblock-detected.visible,
+    #adblock-not-detected.visible {
+      display: flex
     }
 
     .results {
@@ -96,7 +116,7 @@
     }
 
     tr > th {
-      color: #999;
+      color: #666;
       font-weight: normal;
       text-transform: uppercase;
       font-size: 0.8em;
@@ -125,10 +145,6 @@
 
     .test-allowed td:last-child {
       color: red;
-    }
-
-    #adblock-not-detected {
-      display: none;
     }
 
     .sk-cube-grid {
@@ -247,6 +263,9 @@
           </div>
         </div>
       </div>
+      <footer>
+        <a href="https://github.com/dcramer/amiblockingads.com">Open Source on GitHub</a>
+      </footer>
     </section>
     <script type="text/javascript">
     (function() {
@@ -308,7 +327,7 @@
         var root = document.getElementById(nodeId);
         renderResults(root, testResults)
         document.body.className = '';
-        root.style.display = 'block';
+        root.className = 'visible';
       } 
 
       function renderResults(parentEl, testResults) {
